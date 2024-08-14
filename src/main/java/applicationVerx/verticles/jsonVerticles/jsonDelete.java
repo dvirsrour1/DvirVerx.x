@@ -1,11 +1,11 @@
-package org.example.Verticles.JsonReaderAndWriter;
+package applicationVerx.verticles.jsonVerticles;
 
+import applicationVerx.verticles.todoEntity.ToDo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.vertx.core.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.Verticles.ToDoEntity.ToDo;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,11 +14,11 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JsonDelete extends AbstractVerticle {
+public class jsonDelete extends AbstractVerticle {
     private static final Gson gson = new Gson();
     private static final Vertx vertx = Vertx.vertx();
-    private final static Logger logger = LogManager.getLogger(JsonDelete.class);
-    private final static String FileName = "C:\\Users\\aliza_rvjno4x\\IdeaProjects\\DvirVerx.x\\src\\main\\java\\org\\example\\JsonFiles\\data.json";
+    private final static Logger logger = LogManager.getLogger(jsonDelete.class);
+    private final static String FileName = "C:\\Users\\aliza_rvjno4x\\IdeaProjects\\DvirVerx.x\\src\\main\\resources\\JsonFiles\\data.json";
 
 
     @Override

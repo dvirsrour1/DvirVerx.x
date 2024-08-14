@@ -1,4 +1,4 @@
-package org.example.Verticles.JsonReaderAndWriter;
+package applicationVerx.verticles.jsonVerticles;
 
 
 import com.google.gson.Gson;
@@ -9,7 +9,7 @@ import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.Verticles.ToDoEntity.ToDo;
+import applicationVerx.verticles.todoEntity.ToDo;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,11 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.Character.getType;
-public class JsonReader extends AbstractVerticle {
+public class jsonReader extends AbstractVerticle {
     private static final Gson gson = new Gson();
     private static final Vertx vertx = Vertx.vertx();
-    private final static Logger logger = LogManager.getLogger(JsonReader.class);
-    private final static String FileName = "C:\\Users\\aliza_rvjno4x\\IdeaProjects\\DvirVerx.x\\src\\main\\java\\org\\example\\JsonFiles\\data.json";
+    private final static Logger logger = LogManager.getLogger(jsonReader.class);
+    private final static String FileName = "C:\\Users\\aliza_rvjno4x\\IdeaProjects\\DvirVerx.x\\src\\main\\resources\\JsonFiles\\data.json";
 
     @Override
     public void start() {

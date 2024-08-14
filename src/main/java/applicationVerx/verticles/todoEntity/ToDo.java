@@ -1,4 +1,4 @@
-package org.example.Verticles.ToDoEntity;
+package applicationVerx.verticles.todoEntity;
 
 public class ToDo {
 

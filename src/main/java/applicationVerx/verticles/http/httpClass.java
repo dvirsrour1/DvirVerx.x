@@ -1,50 +1,31 @@
-package org.example.Verticles.HTTP;
+package applicationVerx.verticles.http;
 
-
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
+import applicationVerx.verticles.jsonVerticles.jsonDelete;
+import applicationVerx.verticles.jsonVerticles.jsonReader;
+import applicationVerx.verticles.jsonVerticles.jsonWriter;
+import applicationVerx.verticles.todoEntity.ToDo;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import org.example.Verticles.JsonReaderAndWriter.JsonDelete;
-import org.example.Verticles.JsonReaderAndWriter.JsonReader;
-import org.example.Verticles.JsonReaderAndWriter.JsonWriter;
-import org.example.Verticles.ToDoEntity.ToDo;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
+public class httpClass implements httpInterface{
 
-public class HTTPServer extends AbstractVerticle {
-
-    private Logger log = Logger.getLogger(this.getClass().getName());
-
-    @Override
-    public void start(Promise<Void> future) {
-
+    public Router createRouter(Vertx vertx) {
         Router router = Router.router(vertx);
-        router.get("/thelist").handler(this::GETTheList);
-        router.get("/newUser/:userId/:userName/:userDescription").handler(this::POSTNewUser);  //change to post
-        router.get("/deleteUser/:userId").handler(this::POSTDeleteUser); //change to post
-        router.get("/updateUser/:userId/:userNewDescription").handler(this::POSTUpdateUser); //chamge to post
 
-        vertx.createHttpServer() // הגדרת שרת
-                .requestHandler(router // הגדרת בקשה המטפלת בכל פנייה לשרת
-                ).listen(config().getInteger("http.port", 9090), //הגדרת PORT
-                        result -> {
-                            if (result.succeeded()) {
-                                future.complete();
-                            } else {
-                                future.fail(result.cause());
-                            }
-                        }); //בדיקה האם ההאזנה לPORT הצליחה
+        router.get("/List").handler(this::getList);
+        router.get("/NewUser/:userId/:userName/:userDescription").handler(this::postNewUser);
+        router.get("/DeleteUser/:userId").handler(this::postDeleteUser);
+        router.get("/UpdateUserDescription/:userId/:userNewDescription").handler(this::postUpdateUserDescription);
 
-
-
+        return router;
     }
-    public void POSTNewUser(RoutingContext routingContext) {
-        JsonWriter jsonWriter = new JsonWriter();
+
+    public void postNewUser(RoutingContext routingContext) {
+        jsonWriter jsonWriter = new jsonWriter();
         HashMap<String, ToDo> users= new HashMap<>();
         String userId = routingContext.request().getParam("userId");
         String userName = routingContext.request().getParam("userName");
@@ -73,8 +54,8 @@ public class HTTPServer extends AbstractVerticle {
         });
 
     }
-    public void GETTheList(RoutingContext routingContext) {
-        JsonReader jsonReader = new JsonReader();
+    public void getList(RoutingContext routingContext) {
+        jsonReader jsonReader = new jsonReader();
         jsonReader.readUserFromFile().onComplete(rc -> {
             if(rc.succeeded())
             {
@@ -88,10 +69,10 @@ public class HTTPServer extends AbstractVerticle {
             }
         });
     }
-    public void POSTUpdateUser(RoutingContext routingContext) {
-        JsonDelete jsonDelete = new JsonDelete();
-        JsonWriter jsonWriter = new JsonWriter();
-        JsonReader jsonReader = new JsonReader();
+    public void postUpdateUserDescription(RoutingContext routingContext) {
+        jsonDelete jsonDelete = new jsonDelete();
+        jsonWriter jsonWriter = new jsonWriter();
+        jsonReader jsonReader = new jsonReader();
         HashMap<String,ToDo> hashMapFromJson = new HashMap<>();
 
         jsonReader.readUserFromFile().onComplete(rc -> {
@@ -110,7 +91,7 @@ public class HTTPServer extends AbstractVerticle {
                 }
                 ToDo TheUser = hashMapFromJson.get(routingContext.request().getParam("userId"));
                 TheUser.setDescription(routingContext.request().getParam("userNewDescription")); //Making a new ToDo with fixed description
-                POSTDeleteUser(routingContext); //deleting the one that exists
+                postDeleteUser(routingContext); //deleting the one that exists
                 //adding
                 HashMap<String,ToDo> users= new HashMap<>();
                 users.put(routingContext.request().getParam("userId"),TheUser);
@@ -129,8 +110,8 @@ public class HTTPServer extends AbstractVerticle {
         });
 
     }
-    public void POSTDeleteUser(RoutingContext routingContext) {
-        JsonDelete jsonDelete = new JsonDelete();
+    public void postDeleteUser(RoutingContext routingContext) {
+        jsonDelete jsonDelete = new jsonDelete();
         String id = routingContext.request().getParam("userId");
         try {
             Integer.parseInt(id);
@@ -147,14 +128,4 @@ public class HTTPServer extends AbstractVerticle {
             }
         });
     }
-
-
-
-
-    public static void main(String[] args) {
-        Vertx vertx = Vertx.vertx();
-        vertx.deployVerticle(new HTTPServer());
-    }
-
-
 }

@@ -1,107 +1,25 @@
-package org.example.Verticles.JsonReaderAndWriter;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
-import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
+package applicationVerx.projects;
+
+import applicationVerx.verticles.jsonVerticles.jsonDelete;
+import applicationVerx.verticles.jsonVerticles.jsonReader;
+import applicationVerx.verticles.jsonVerticles.jsonWriter;
+import applicationVerx.verticles.todoEntity.ToDo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.Verticles.ToDoEntity.ToDo;
 
-import java.io.*;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class JsonWriter extends AbstractVerticle {
+import static applicationVerx.verticles.jsonVerticles.jsonWriter.FirstBlock;
 
-    private final static Gson gson = new Gson();
-    private final static Vertx vertx = Vertx.vertx();
-    private final static Logger logger = LogManager.getLogger(JsonWriter.class);
-    private final static String FileName = "C:\\Users\\aliza_rvjno4x\\IdeaProjects\\DvirVerx.x\\src\\main\\java\\org\\example\\JsonFiles\\data.json";
-
-    public enum FUNCTIONS {
-        WRONG_SYMBOL(0),
-        WRITE_TO_FILE(1),
-        READ_FROM_FILE(2),
-        DELETE_FROM_FILE(3),
-        STOP_FUNCTIONS(-1);
-
-        private int FUNC;
-
-        FUNCTIONS(int func) {
-            this.FUNC = func;
-        }
-
-        public int getFunc() {
-            return FUNC;
-        }
-
-        public static FUNCTIONS fromInt(int func) {
-            for (FUNCTIONS f : FUNCTIONS.values()) {
-                if (f.getFunc() == func) {
-                    return f;
-                }
-            }
-            return FUNCTIONS.WRONG_SYMBOL;
-        }
-
-    }
-
-    private final static String FirstBlock = """
-            ---------------------------------------------------------------------------------------
-                       
-            Programmer: Dvir Srour
-            Date: 1.8.2024
-            KerenOrFirstProject_VertX
-                       
-            git branch is working    
-            --------------------------------------------------------------------------------------- 
-             """;
-
-    @Override
-    public void start() {
-
-    } //eventLoop
-
-
-    public Future<Void> writeUserToFile(HashMap<String, ToDo> users) {
-        Promise<Void> promise = Promise.promise();
-        vertx.executeBlocking(promiseHandler -> {
-            Map<String, ToDo> todoMap = new HashMap<>();
-            try (FileReader reader = new FileReader(FileName)) {
-                Type type = new TypeToken<HashMap<String, ToDo>>() {
-                }.getType();
-                todoMap = gson.fromJson(reader, type);
-                if (todoMap == null) {
-                    todoMap = new HashMap<>();
-                }
-            } catch (IOException e) {
-                logger.error(e);
-                promiseHandler.fail(e);
-                return;
-            }
-
-            todoMap.putAll(users);
-            try (FileWriter file = new FileWriter(FileName)) {
-                gson.toJson(todoMap, file);
-                promiseHandler.complete();
-            } catch (IOException e) {
-                logger.error(e);
-                promiseHandler.fail(e);
-            }
-        }, promise);
-
-        return promise.future();
-    }
+public class jsonApplication {
 
     public static void main(String[] args) {
-        JsonWriter jsonWriter = new JsonWriter();
-        JsonReader jsonReader = new JsonReader();
-        JsonDelete jsonDelete = new JsonDelete();
-
+        jsonWriter jsonWriter = new jsonWriter();
+        jsonReader jsonReader = new jsonReader();
+        jsonDelete jsonDelete = new jsonDelete();
+        Logger logger = LogManager.getLogger(jsonApplication.class);
         Scanner scanner = new Scanner(System.in);
         HashMap<String, ToDo> users = new HashMap<>();
         System.out.println(FirstBlock);
@@ -114,12 +32,12 @@ public class JsonWriter extends AbstractVerticle {
             logger.info("-1 - Exit");
             logger.info("Your choice: ");
 
-            FUNCTIONS FromChoice = FUNCTIONS.fromInt(0);
+            applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS FromChoice = applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.fromInt(0);
             int choose = 0;
             choose = scanner.nextInt();
-            FromChoice = FUNCTIONS.fromInt(choose);
+            FromChoice = applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.fromInt(choose);
             switch (FromChoice) {
-                case FUNCTIONS.WRITE_TO_FILE:
+                case applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.WRITE_TO_FILE:
                     String Stopper = "y";
                     while (!Stopper.equals("done") && !Stopper.equals("Done") && !Stopper.equals("DONE")) {
                         logger.info("Write your Name: ");
@@ -157,7 +75,7 @@ public class JsonWriter extends AbstractVerticle {
                     });
                     break;
 
-                case FUNCTIONS.READ_FROM_FILE:
+                case applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.READ_FROM_FILE:
                     jsonReader.readUserFromFile().onComplete(readResult -> {
                         if (readResult.succeeded()) {
 
@@ -172,7 +90,7 @@ public class JsonWriter extends AbstractVerticle {
                     break;
 
 
-                case FUNCTIONS.DELETE_FROM_FILE:
+                case applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.DELETE_FROM_FILE:
                     logger.info("Which one would you like to delete? write his ID.");
                     String choice = scanner.next();
                     try {
@@ -217,6 +135,5 @@ public class JsonWriter extends AbstractVerticle {
 
 
     }
-
 
 }
