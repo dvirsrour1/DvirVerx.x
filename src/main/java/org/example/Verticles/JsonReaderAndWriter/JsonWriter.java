@@ -57,7 +57,7 @@ public class JsonWriter extends AbstractVerticle {
             Date: 1.8.2024
             KerenOrFirstProject_VertX
                        
-                       
+            git branch is working    
             --------------------------------------------------------------------------------------- 
              """;
 
