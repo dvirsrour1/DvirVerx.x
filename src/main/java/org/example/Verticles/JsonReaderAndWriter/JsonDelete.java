@@ -18,7 +18,7 @@ public class JsonDelete extends AbstractVerticle {
     private static final Gson gson = new Gson();
     private static final Vertx vertx = Vertx.vertx();
     private final static Logger logger = LogManager.getLogger(JsonDelete.class);
-    private final static String FileName = "C:\\Users\\aliza_rvjno4x\\IdeaProjects\\KerenOrFirst\\src\\main\\java\\org\\example\\JsonFiles\\data.json";
+    private final static String FileName = "C:\\Users\\aliza_rvjno4x\\IdeaProjects\\DvirVerx.x\\src\\main\\java\\org\\example\\JsonFiles\\data.json";
 
 
     @Override
@@ -41,7 +41,7 @@ public class JsonDelete extends AbstractVerticle {
                     }catch (Exception e)
                     {
                         logger.error(e);
-                        PromiseHandler.fail(e); //C:\Users\aliza_rvjno4x\IdeaProjects\DvirVerx.x
+                        PromiseHandler.fail(e);
                     }
 
                 }
@@ -49,7 +49,7 @@ public class JsonDelete extends AbstractVerticle {
                     PromiseHandler.fail("id " + id + " not found");
                 }
                 if(todoMap.isEmpty()) {todoMap = null;};
-                PromiseHandler.complete(todoMap.toString());
+                PromiseHandler.complete("Item deleted successfully.");
             } catch (IOException e) {
                 logger.error(e);
                 PromiseHandler.fail(e);

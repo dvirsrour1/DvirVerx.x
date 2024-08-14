@@ -189,7 +189,7 @@ public class JsonWriter extends AbstractVerticle {
                                 logger.info("Delete Successful");
                             }
                             if (result.failed()) {
-                                logger.info("Delete Failed");
+                                logger.info("Delete Failed" + result.cause().getMessage());
                             }
                         });
                     }
