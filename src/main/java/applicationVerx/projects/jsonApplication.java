@@ -66,7 +66,7 @@ public class jsonApplication {
                         logger.info("Write 'done' if you would like to stop adding students.");
                         Stopper = scanner.next();
                     }
-                    jsonWriter.writeUserToFile(users).onComplete(result -> {
+                    jsonWriter.write(users).onComplete(result -> {
                         if (result.succeeded()) {
                             logger.info("Writed user to file");
                         } else {
@@ -76,7 +76,7 @@ public class jsonApplication {
                     break;
 
                 case applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.READ_FROM_FILE:
-                    jsonReader.readUserFromFile().onComplete(readResult -> {
+                    jsonReader.readJson().onComplete(readResult -> {
                         if (readResult.succeeded()) {
 
                             logger.info("Read Successful");
@@ -102,7 +102,7 @@ public class jsonApplication {
                     logger.warn("Are you sure you want to delete the information from the JSON file? (1 for yes 0 for no)");
                     String YesNo = scanner.next();
                     if (Integer.parseInt(YesNo) == 1) {
-                        jsonDelete.DeleteFromJson(choice).onComplete(result -> {
+                        jsonDelete.deleteUser(choice).onComplete(result -> {
                             if (result.succeeded()) {
                                 logger.info("Delete Successful");
                             }

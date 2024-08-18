@@ -1,10 +1,9 @@
 package applicationVerx.verticles.jsonVerticles;
 
+import applicationVerx.validation.validationClass;
 import applicationVerx.verticles.todoEntity.ToDo;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.vertx.core.*;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.FileReader;
@@ -14,21 +13,21 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import static applicationVerx.validation.validationClass.FileName;
+import static applicationVerx.validation.validationClass.gson;
+import static applicationVerx.validation.validationClass.*;
+
 public class jsonDelete extends AbstractVerticle {
-    private static final Gson gson = new Gson();
-    private static final Vertx vertx = Vertx.vertx();
-    private final static Logger logger = LogManager.getLogger(jsonDelete.class);
-    private final static String FileName = "C:\\Users\\aliza_rvjno4x\\IdeaProjects\\DvirVerx.x\\src\\main\\resources\\JsonFiles\\data.json";
 
-
+    private final static Logger logger = getLoggerFromValidationClass(jsonDelete.class);
     @Override
     public void start() {
 
     }
 
-    public Future<String> DeleteFromJson(String id) {
+    public Future<String> deleteUser(String id) {
         Promise<String> promise = Promise.promise();
-        vertx.executeBlocking(PromiseHandler ->{
+        validationClass.vertx.executeBlocking(PromiseHandler ->{
             try (FileReader reader = new FileReader(FileName)) {
                 Map<String, ToDo> todoMap = new HashMap<>();
                 Type type = new TypeToken<HashMap<String, ToDo>>() {}.getType();

@@ -1,11 +1,9 @@
 package applicationVerx.verticles.jsonVerticles;
-import com.google.gson.Gson;
+import applicationVerx.validation.validationClass;
 import com.google.gson.reflect.TypeToken;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import applicationVerx.verticles.todoEntity.ToDo;
 
@@ -14,12 +12,11 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import static applicationVerx.validation.validationClass.*;
+
 public class jsonWriter extends AbstractVerticle {
 
-    private final static Gson gson = new Gson();
-    private final static Vertx vertx = Vertx.vertx();
-    public final static Logger logger = LogManager.getLogger(jsonWriter.class);
-    private final static String FileName = "C:\\Users\\aliza_rvjno4x\\IdeaProjects\\DvirVerx.x\\src\\main\\resources\\JsonFiles\\data.json";
+    public final static Logger logger = getLoggerFromValidationClass(jsonWriter.class);
 
     public enum FUNCTIONS {
         WRONG_SYMBOL(0),
@@ -66,9 +63,9 @@ public class jsonWriter extends AbstractVerticle {
     } //eventLoop
 
 
-    public Future<Void> writeUserToFile(HashMap<String, ToDo> users) {
+    public Future<Void> write(HashMap<String, ToDo> users) {
         Promise<Void> promise = Promise.promise();
-        vertx.executeBlocking(promiseHandler -> {
+        validationClass.vertx.executeBlocking(promiseHandler -> {
             Map<String, ToDo> todoMap = new HashMap<>();
             try (FileReader reader = new FileReader(FileName)) {
                 Type type = new TypeToken<HashMap<String, ToDo>>() {

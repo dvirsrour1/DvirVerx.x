@@ -1,8 +1,6 @@
 package applicationVerx.verticles.http;
 
-import applicationVerx.verticles.jsonVerticles.jsonDelete;
-import applicationVerx.verticles.jsonVerticles.jsonReader;
-import applicationVerx.verticles.jsonVerticles.jsonWriter;
+import applicationVerx.validation.validationClass;
 import applicationVerx.verticles.todoEntity.ToDo;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
@@ -12,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class httpClass implements httpInterface{
-
+  //  public static final Logger log = Logger.getLogger(httpClass.class.getName());
     public Router createRouter(Vertx vertx) {
         Router router = Router.router(vertx);
 
@@ -25,7 +23,6 @@ public class httpClass implements httpInterface{
     }
 
     public void postNewUser(RoutingContext routingContext) {
-        jsonWriter jsonWriter = new jsonWriter();
         HashMap<String, ToDo> users= new HashMap<>();
         String userId = routingContext.request().getParam("userId");
         String userName = routingContext.request().getParam("userName");
@@ -43,7 +40,7 @@ public class httpClass implements httpInterface{
         ToDo user1 = new ToDo();
         user1.ToDo(userName,Integer.parseInt(userId),description);
         users.put(userId,user1);
-        jsonWriter.writeUserToFile(users).onComplete(rc -> {
+        validationClass.jsonWriter.write(users).onComplete(rc -> {
             if (rc.succeeded()) {
                 routingContext.response()
                         .putHeader("content-type", "text/plain").end("User added correctly");
@@ -55,8 +52,7 @@ public class httpClass implements httpInterface{
 
     }
     public void getList(RoutingContext routingContext) {
-        jsonReader jsonReader = new jsonReader();
-        jsonReader.readUserFromFile().onComplete(rc -> {
+        validationClass.jsonReader.readJson().onComplete(rc -> {
             if(rc.succeeded())
             {
                 String results = new String();
@@ -70,12 +66,9 @@ public class httpClass implements httpInterface{
         });
     }
     public void postUpdateUserDescription(RoutingContext routingContext) {
-        jsonDelete jsonDelete = new jsonDelete();
-        jsonWriter jsonWriter = new jsonWriter();
-        jsonReader jsonReader = new jsonReader();
         HashMap<String,ToDo> hashMapFromJson = new HashMap<>();
 
-        jsonReader.readUserFromFile().onComplete(rc -> {
+        validationClass.jsonReader.readJson().onComplete(rc -> {
             if(rc.succeeded())
             {
                 String results = new String();
@@ -95,7 +88,7 @@ public class httpClass implements httpInterface{
                 //adding
                 HashMap<String,ToDo> users= new HashMap<>();
                 users.put(routingContext.request().getParam("userId"),TheUser);
-                jsonWriter.writeUserToFile(users).onComplete(Result -> {
+                validationClass.jsonWriter.write(users).onComplete(Result -> {
                     if (Result.succeeded()) {
                         routingContext.response()
                                 .putHeader("content-type", "text/plain").end("User updated correctly.");
@@ -111,7 +104,6 @@ public class httpClass implements httpInterface{
 
     }
     public void postDeleteUser(RoutingContext routingContext) {
-        jsonDelete jsonDelete = new jsonDelete();
         String id = routingContext.request().getParam("userId");
         try {
             Integer.parseInt(id);
@@ -119,10 +111,10 @@ public class httpClass implements httpInterface{
         {
             routingContext.response().putHeader("content-type", "text/plain").end("Id is not correct");
         }
-        jsonDelete.DeleteFromJson(id).onComplete(rc ->{
+        validationClass.jsonDelete.deleteUser(id).onComplete(rc ->{
             if(rc.succeeded())
             {
-                routingContext.response().putHeader("content-type", "text/plain").end("Delete Succesfully");
+                routingContext.response().putHeader("content-type", "text/plain").end("The list updated successfully");
             }else{
                 routingContext.response().putHeader("content-type", "text/plain").end("ERROR: Deleting Failed");
             }
