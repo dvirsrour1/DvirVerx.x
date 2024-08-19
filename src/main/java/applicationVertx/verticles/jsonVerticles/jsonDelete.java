@@ -1,7 +1,7 @@
-package applicationVerx.verticles.jsonVerticles;
+package applicationVertx.verticles.jsonVerticles;
 
-import applicationVerx.validation.validationClass;
-import applicationVerx.verticles.todoEntity.ToDo;
+import applicationVertx.validation.validationClass;
+import applicationVertx.verticles.todoEntity.ToDo;
 import com.google.gson.reflect.TypeToken;
 import io.vertx.core.*;
 import org.apache.logging.log4j.Logger;
@@ -13,9 +13,9 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import static applicationVerx.validation.validationClass.FileName;
-import static applicationVerx.validation.validationClass.gson;
-import static applicationVerx.validation.validationClass.*;
+import static applicationVertx.validation.validationClass.FileName;
+import static applicationVertx.validation.validationClass.gson;
+import static applicationVertx.validation.validationClass.*;
 
 public class jsonDelete extends AbstractVerticle {
 

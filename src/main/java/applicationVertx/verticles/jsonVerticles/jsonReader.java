@@ -1,12 +1,12 @@
-package applicationVerx.verticles.jsonVerticles;
+package applicationVertx.verticles.jsonVerticles;
 
-import applicationVerx.validation.validationClass;
+import applicationVertx.validation.validationClass;
 import com.google.gson.reflect.TypeToken;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import org.apache.logging.log4j.Logger;
-import applicationVerx.verticles.todoEntity.ToDo;
+import applicationVertx.verticles.todoEntity.ToDo;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import static applicationVerx.validation.validationClass.*;
+import static applicationVertx.validation.validationClass.*;
 import static java.lang.Character.getType;
 import static org.apache.logging.log4j.LogManager.getLogger;
 

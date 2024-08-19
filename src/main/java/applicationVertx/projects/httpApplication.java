@@ -1,6 +1,6 @@
-package applicationVerx.projects;
+package applicationVertx.projects;
 
-import applicationVerx.verticles.http.httpServer;
+import applicationVertx.verticles.http.httpServer;
 import io.vertx.core.Vertx;
 
 public class httpApplication {

@@ -1,8 +1,8 @@
-package applicationVerx.validation;
+package applicationVertx.validation;
 
-import applicationVerx.verticles.jsonVerticles.jsonDelete;
-import applicationVerx.verticles.jsonVerticles.jsonReader;
-import applicationVerx.verticles.jsonVerticles.jsonWriter;
+import applicationVertx.verticles.jsonVerticles.jsonDelete;
+import applicationVertx.verticles.jsonVerticles.jsonReader;
+import applicationVertx.verticles.jsonVerticles.jsonWriter;
 import com.google.gson.Gson;
 import io.vertx.core.Vertx;
 import org.apache.logging.log4j.LogManager;
@@ -20,5 +20,8 @@ public class validationClass {
 
     public static org.apache.logging.log4j.Logger getLoggerFromValidationClass(Class<?> clazz) {
         return LogManager.getLogger(clazz);
+    }
+    public static String intToString(int number) {
+        return String.valueOf(number);
     }
 }

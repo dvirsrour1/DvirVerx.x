@@ -1,45 +1,49 @@
-package applicationVerx.verticles.http;
+package applicationVertx.verticles.http;
 
-import applicationVerx.validation.validationClass;
-import applicationVerx.verticles.todoEntity.ToDo;
+import applicationVertx.validation.validationClass;
+import applicationVertx.verticles.todoEntity.ToDo;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static applicationVertx.validation.validationClass.gson;
+import static applicationVertx.validation.validationClass.intToString;
+
 public class httpClass implements httpInterface{
-  //  public static final Logger log = Logger.getLogger(httpClass.class.getName());
+
     public Router createRouter(Vertx vertx) {
         Router router = Router.router(vertx);
-
+        router.route().handler(BodyHandler.create()); // מטפל בגוף הבקשות. BODY
         router.get("/List").handler(this::getList);
-        router.get("/NewUser/:userId/:userName/:userDescription").handler(this::postNewUser);
-        router.get("/DeleteUser/:userId").handler(this::postDeleteUser);
-        router.get("/UpdateUserDescription/:userId/:userNewDescription").handler(this::postUpdateUserDescription);
+        router.post("/NewUser").handler(this::postNewUser);
+        router.delete("/DeleteUser/:userId").handler(this::postDeleteUser);
+        router.post("/UpdateUserDescription").handler(this::postUpdateUserDescription);
 
         return router;
     }
 
     public void postNewUser(RoutingContext routingContext) {
         HashMap<String, ToDo> users= new HashMap<>();
-        String userId = routingContext.request().getParam("userId");
-        String userName = routingContext.request().getParam("userName");
-        String description = routingContext.request().getParam("userDescription");
-        try{
-            Integer.parseInt(userId);
-
-        }catch (Exception e){
-            routingContext.response().putHeader("content-type", "text/plain").end("Invalid user ID");
-        }
-        if(userName.matches("[0-9]*"))
-        {
-            routingContext.response().putHeader("content-type", "text/plain").end("Invalid user ID");
-        }
         ToDo user1 = new ToDo();
-        user1.ToDo(userName,Integer.parseInt(userId),description);
-        users.put(userId,user1);
+        try{
+            user1 = gson.fromJson(routingContext.getBodyAsString(), ToDo.class);
+            if(user1==null)
+            {
+                routingContext.response().putHeader("content-type", "text/plain").end("ERROR: The body is empty.");
+            }
+        }catch (NullPointerException e){
+            routingContext.response().putHeader("content-type", "text/plain").end("ERROR: The body is empty.");
+            return;
+        }catch (Exception e){
+            routingContext.response().putHeader("content-type", "text/plain").end("ERROR: An error occurred.");
+            return;
+        }
+        String key = intToString(user1.getId());
+        users.put(key,user1);
         validationClass.jsonWriter.write(users).onComplete(rc -> {
             if (rc.succeeded()) {
                 routingContext.response()
@@ -71,23 +75,32 @@ public class httpClass implements httpInterface{
         validationClass.jsonReader.readJson().onComplete(rc -> {
             if(rc.succeeded())
             {
+                String userId = routingContext.getBodyAsJson().getString("userId");
+                String description = routingContext.getBodyAsJson().getString("description");
                 String results = new String();
                 for (Map.Entry<String, ToDo> entry : rc.result().entrySet()) {
                     ToDo userHelp = new ToDo();
                     userHelp.ToDo(entry.getValue().getName(),entry.getValue().getId(),entry.getValue().getDescription());
                     hashMapFromJson.put(entry.getKey(),userHelp);
-                } //reading it all to a ToDoHashMap
-                if(hashMapFromJson.get(routingContext.request().getParam("userId"))==null)
+                }
+                if(hashMapFromJson.get(userId)==null)
                 {
                     routingContext.response().putHeader("content-type", "text/plain").end("User updating has failed.");
                     return;
                 }
-                ToDo TheUser = hashMapFromJson.get(routingContext.request().getParam("userId"));
-                TheUser.setDescription(routingContext.request().getParam("userNewDescription")); //Making a new ToDo with fixed description
-                postDeleteUser(routingContext); //deleting the one that exists
+                ToDo TheUser = hashMapFromJson.get(userId);
+                TheUser.setDescription(description);
+                validationClass.jsonDelete.deleteUser(userId).onComplete(rc1 ->{
+                    if(rc1.succeeded())
+                    {
+                        routingContext.response().putHeader("content-type", "text/plain").end("The list updated successfully");
+                    }else{
+                        routingContext.response().putHeader("content-type", "text/plain").end("ERROR: Deleting Failed");
+                    }
+                });
                 //adding
                 HashMap<String,ToDo> users= new HashMap<>();
-                users.put(routingContext.request().getParam("userId"),TheUser);
+                users.put(userId,TheUser);
                 validationClass.jsonWriter.write(users).onComplete(Result -> {
                     if (Result.succeeded()) {
                         routingContext.response()

@@ -1,9 +1,9 @@
-package applicationVerx.projects;
+package applicationVertx.projects;
 
-import applicationVerx.verticles.jsonVerticles.jsonDelete;
-import applicationVerx.verticles.jsonVerticles.jsonReader;
-import applicationVerx.verticles.jsonVerticles.jsonWriter;
-import applicationVerx.verticles.todoEntity.ToDo;
+import applicationVertx.verticles.jsonVerticles.jsonDelete;
+import applicationVertx.verticles.jsonVerticles.jsonReader;
+import applicationVertx.verticles.jsonVerticles.jsonWriter;
+import applicationVertx.verticles.todoEntity.ToDo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import static applicationVerx.verticles.jsonVerticles.jsonWriter.FirstBlock;
+import static applicationVertx.verticles.jsonVerticles.jsonWriter.FirstBlock;
 
 public class jsonApplication {
 
@@ -32,12 +32,12 @@ public class jsonApplication {
             logger.info("-1 - Exit");
             logger.info("Your choice: ");
 
-            applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS FromChoice = applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.fromInt(0);
+            applicationVertx.verticles.jsonVerticles.jsonWriter.FUNCTIONS FromChoice = applicationVertx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.fromInt(0);
             int choose = 0;
             choose = scanner.nextInt();
-            FromChoice = applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.fromInt(choose);
+            FromChoice = applicationVertx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.fromInt(choose);
             switch (FromChoice) {
-                case applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.WRITE_TO_FILE:
+                case applicationVertx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.WRITE_TO_FILE:
                     String Stopper = "y";
                     while (!Stopper.equals("done") && !Stopper.equals("Done") && !Stopper.equals("DONE")) {
                         logger.info("Write your Name: ");
@@ -75,7 +75,7 @@ public class jsonApplication {
                     });
                     break;
 
-                case applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.READ_FROM_FILE:
+                case applicationVertx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.READ_FROM_FILE:
                     jsonReader.readJson().onComplete(readResult -> {
                         if (readResult.succeeded()) {
 
@@ -90,7 +90,7 @@ public class jsonApplication {
                     break;
 
 
-                case applicationVerx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.DELETE_FROM_FILE:
+                case applicationVertx.verticles.jsonVerticles.jsonWriter.FUNCTIONS.DELETE_FROM_FILE:
                     logger.info("Which one would you like to delete? write his ID.");
                     String choice = scanner.next();
                     try {

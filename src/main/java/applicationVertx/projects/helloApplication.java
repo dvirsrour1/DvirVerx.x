@@ -1,4 +1,4 @@
-package applicationVerx.projects;
+package applicationVertx.projects;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;

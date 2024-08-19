@@ -1,4 +1,4 @@
-package applicationVerx.verticles.http;
+package applicationVertx.verticles.http;
 
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
@@ -10,4 +10,5 @@ public interface httpInterface {
     void postDeleteUser(RoutingContext routingContext);
     void postUpdateUserDescription(RoutingContext routingContext);
     Router createRouter(Vertx vertx);
+
 }

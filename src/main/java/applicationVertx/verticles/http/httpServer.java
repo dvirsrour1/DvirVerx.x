@@ -1,4 +1,4 @@
-package applicationVerx.verticles.http;
+package applicationVertx.verticles.http;
 
 
 import io.vertx.core.AbstractVerticle;
@@ -6,7 +6,7 @@ import io.vertx.core.Promise;
 import io.vertx.ext.web.Router;
 import org.apache.logging.log4j.Logger;
 
-import static applicationVerx.validation.validationClass.getLoggerFromValidationClass;
+import static applicationVertx.validation.validationClass.getLoggerFromValidationClass;
 
 
 public class httpServer extends AbstractVerticle{
@@ -19,7 +19,7 @@ public class httpServer extends AbstractVerticle{
 
         Router router = httpClassInstance.createRouter(vertx);
         vertx.createHttpServer() // הגדרת שרת
-                .requestHandler(router // הגדרת בקשה המטפלת בכל פנייה לשרת
+                .requestHandler(router
                 ).listen(config().getInteger("http.port", 9090), //הגדרת PORT
                         result -> {
                             if (result.succeeded()) {
