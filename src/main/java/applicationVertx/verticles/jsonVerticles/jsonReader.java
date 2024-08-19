@@ -6,7 +6,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import org.apache.logging.log4j.Logger;
-import applicationVertx.verticles.todoEntity.ToDo;
+import applicationVertx.Entitys.toDoUserEntity.toDoUser;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,12 +25,13 @@ public class jsonReader extends AbstractVerticle {
         // eventLoop logic here
     }
 
-    public Future<Map<String, ToDo>> readJson() {
-        Promise<Map<String,ToDo>> promise = Promise.promise();
+    public Future<Map<String, toDoUser>> readJson(Files files) {
+        String file = Files.getFileName(files);
+        Promise<Map<String, toDoUser>> promise = Promise.promise();
         validationClass.vertx.executeBlocking(promiseHandler -> {
-            try (FileReader reader = new FileReader(FileName)) {
-                Map<String, ToDo> todoMap = new HashMap<>();
-                Type type = new TypeToken<HashMap<String, ToDo>>() {}.getType();
+            try (FileReader reader = new FileReader(file)) {
+                Map<String, toDoUser> todoMap = new HashMap<>();
+                Type type = new TypeToken<HashMap<String, toDoUser>>() {}.getType();
                 todoMap = gson.fromJson(reader, type);
                 if(todoMap.isEmpty()) {todoMap = null;};
                 promiseHandler.complete(todoMap);

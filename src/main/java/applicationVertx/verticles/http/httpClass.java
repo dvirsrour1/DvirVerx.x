@@ -1,8 +1,10 @@
 package applicationVertx.verticles.http;
 
+import applicationVertx.Entitys.tasksEntity.task;
 import applicationVertx.validation.validationClass;
-import applicationVertx.verticles.todoEntity.ToDo;
+import applicationVertx.Entitys.toDoUserEntity.toDoUser;
 import io.vertx.core.Vertx;
+import io.vertx.core.net.impl.pool.Task;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -27,10 +29,10 @@ public class httpClass implements httpInterface{
     }
 
     public void postNewUser(RoutingContext routingContext) {
-        HashMap<String, ToDo> users= new HashMap<>();
-        ToDo user1 = new ToDo();
+        HashMap<String, toDoUser> users= new HashMap<>();
+        toDoUser user1 = new toDoUser();
         try{
-            user1 = gson.fromJson(routingContext.getBodyAsString(), ToDo.class);
+            user1 = gson.fromJson(routingContext.getBodyAsString(), toDoUser.class);
             if(user1==null)
             {
                 routingContext.response().putHeader("content-type", "text/plain").end("ERROR: The body is empty.");
@@ -44,7 +46,7 @@ public class httpClass implements httpInterface{
         }
         String key = intToString(user1.getId());
         users.put(key,user1);
-        validationClass.jsonWriter.write(users).onComplete(rc -> {
+        validationClass.jsonWriter.write(users, validationClass.Files.USERS).onComplete(rc -> {
             if (rc.succeeded()) {
                 routingContext.response()
                         .putHeader("content-type", "text/plain").end("User added correctly");
@@ -56,11 +58,11 @@ public class httpClass implements httpInterface{
 
     }
     public void getList(RoutingContext routingContext) {
-        validationClass.jsonReader.readJson().onComplete(rc -> {
+        validationClass.jsonReader.readJson(validationClass.Files.USERS).onComplete(rc -> {
             if(rc.succeeded())
             {
                 String results = new String();
-                for (Map.Entry<String, ToDo> entry : rc.result().entrySet()) {
+                for (Map.Entry<String, toDoUser> entry : rc.result().entrySet()) {
                     results = results +("name: " + entry.getValue().getName() +", id: " + entry.getValue().getId() +", Description: " + entry.getValue().getDescription() + System.getProperty("line.separator"));
                 }
                 routingContext.response().putHeader("content-type", "text/plain").end(results);
@@ -70,17 +72,17 @@ public class httpClass implements httpInterface{
         });
     }
     public void postUpdateUserDescription(RoutingContext routingContext) {
-        HashMap<String,ToDo> hashMapFromJson = new HashMap<>();
+        HashMap<String, toDoUser> hashMapFromJson = new HashMap<>();
 
-        validationClass.jsonReader.readJson().onComplete(rc -> {
+        validationClass.jsonReader.readJson(validationClass.Files.USERS).onComplete(rc -> {
             if(rc.succeeded())
             {
                 String userId = routingContext.getBodyAsJson().getString("userId");
                 String description = routingContext.getBodyAsJson().getString("description");
                 String results = new String();
-                for (Map.Entry<String, ToDo> entry : rc.result().entrySet()) {
-                    ToDo userHelp = new ToDo();
-                    userHelp.ToDo(entry.getValue().getName(),entry.getValue().getId(),entry.getValue().getDescription());
+                for (Map.Entry<String, toDoUser> entry : rc.result().entrySet()) {
+                    toDoUser userHelp = new toDoUser();
+                    userHelp.ToDoUser(entry.getValue().getName(),entry.getValue().getId(),entry.getValue().getDescription());
                     hashMapFromJson.put(entry.getKey(),userHelp);
                 }
                 if(hashMapFromJson.get(userId)==null)
@@ -88,9 +90,9 @@ public class httpClass implements httpInterface{
                     routingContext.response().putHeader("content-type", "text/plain").end("User updating has failed.");
                     return;
                 }
-                ToDo TheUser = hashMapFromJson.get(userId);
+                toDoUser TheUser = hashMapFromJson.get(userId);
                 TheUser.setDescription(description);
-                validationClass.jsonDelete.deleteUser(userId).onComplete(rc1 ->{
+                validationClass.jsonDelete.deleteUser(userId, validationClass.Files.USERS).onComplete(rc1 ->{
                     if(rc1.succeeded())
                     {
                         routingContext.response().putHeader("content-type", "text/plain").end("The list updated successfully");
@@ -98,10 +100,9 @@ public class httpClass implements httpInterface{
                         routingContext.response().putHeader("content-type", "text/plain").end("ERROR: Deleting Failed");
                     }
                 });
-                //adding
-                HashMap<String,ToDo> users= new HashMap<>();
+                HashMap<String, toDoUser> users= new HashMap<>();
                 users.put(userId,TheUser);
-                validationClass.jsonWriter.write(users).onComplete(Result -> {
+                validationClass.jsonWriter.write(users, validationClass.Files.USERS).onComplete(Result -> {
                     if (Result.succeeded()) {
                         routingContext.response()
                                 .putHeader("content-type", "text/plain").end("User updated correctly.");
@@ -109,7 +110,7 @@ public class httpClass implements httpInterface{
                     if (Result.failed()) {
                         routingContext.response().putHeader("content-type", "text/plain").end("User updating has failed");
                     }
-                }); //adding the new user to the Map
+                });
             }else {
                 routingContext.response().putHeader("content-type", "text/plain").end("User updating has failed.");
             }
@@ -124,7 +125,7 @@ public class httpClass implements httpInterface{
         {
             routingContext.response().putHeader("content-type", "text/plain").end("Id is not correct");
         }
-        validationClass.jsonDelete.deleteUser(id).onComplete(rc ->{
+        validationClass.jsonDelete.deleteUser(id, validationClass.Files.USERS).onComplete(rc ->{
             if(rc.succeeded())
             {
                 routingContext.response().putHeader("content-type", "text/plain").end("The list updated successfully");
@@ -132,5 +133,45 @@ public class httpClass implements httpInterface{
                 routingContext.response().putHeader("content-type", "text/plain").end("ERROR: Deleting Failed");
             }
         });
+
+        //delete the tasks he had
     }
+
+    public void postAddTask(RoutingContext routingContext) {
+        HashMap<String, toDoUser> hashMapFromJson = new HashMap<>();
+        task task1 = new task();
+        try{
+            task1 = gson.fromJson(routingContext.getBodyAsString(), task.class);
+        }catch (Exception e)
+        {
+
+        }
+        validationClass.jsonReader.readJson(validationClass.Files.USERS).onComplete(rc -> {
+            if (rc.succeeded()) {
+                String userId = routingContext.getBodyAsJson().getString("userId");
+                String description = routingContext.getBodyAsJson().getString("description");
+                String results = new String();
+                for (Map.Entry<String, toDoUser> entry : rc.result().entrySet()) {
+                    toDoUser userHelp = new toDoUser();
+                    userHelp.ToDoUser(entry.getValue().getName(), entry.getValue().getId(), entry.getValue().getDescription());
+                    hashMapFromJson.put(entry.getKey(), userHelp);
+                }
+                if (hashMapFromJson.get(userId) == null) {
+                    routingContext.response().putHeader("content-type", "text/plain").end("ERROR: There is no User with this ID in the system");
+                    return;
+                }
+            }else {
+                routingContext.response().putHeader("content-type", "text/plain").end("Reading has failed.");
+            }
+        });
+
+        //לכתוב לתיקיה
+
+
+    }
+    public void postDeleteTask(RoutingContext routingContext) {
+        //deleting task
+    }
+
+
 }

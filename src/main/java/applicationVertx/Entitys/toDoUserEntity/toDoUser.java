@@ -1,13 +1,13 @@
-package applicationVertx.verticles.todoEntity;
+package applicationVertx.Entitys.toDoUserEntity;
 
-public class ToDo {
+public class toDoUser {
 
     private String name;
     private int id;
     private String description;
 
 
-    public void ToDo(String name,int id,String description)
+    public void ToDoUser(String name, int id, String description)
     {
         this.name = name;
         this.id = id;
