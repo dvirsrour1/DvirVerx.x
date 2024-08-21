@@ -1,26 +1,20 @@
-package org.example.Verticles.JsonReaderAndWriter;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
-import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
+package applicationVertx.projects;
+
+import applicationVertx.validation.validationClass;
+import applicationVertx.verticles.jsonVerticles.jsonDelete;
+import applicationVertx.verticles.jsonVerticles.jsonReader;
+import applicationVertx.verticles.jsonVerticles.jsonWriter;
+import applicationVertx.Entitys.toDoUserEntity.toDoUser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.Verticles.ToDoEntity.ToDo;
 
-import java.io.*;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class JsonWriter extends AbstractVerticle {
 
-    private final static Gson gson = new Gson();
-    private final static Vertx vertx = Vertx.vertx();
-    private final static Logger logger = LogManager.getLogger(JsonWriter.class);
-    private final static String FileName = "C:\\Users\\aliza_rvjno4x\\IdeaProjects\\DvirVerx.x\\src\\main\\java\\org\\example\\JsonFiles\\data.json";
+public class jsonApplication {
+
 
     public enum FUNCTIONS {
         WRONG_SYMBOL(0),
@@ -50,60 +44,24 @@ public class JsonWriter extends AbstractVerticle {
 
     }
 
-    private final static String FirstBlock = """
+    public final static String FirstBlock = """
             ---------------------------------------------------------------------------------------
                        
             Programmer: Dvir Srour
             Date: 1.8.2024
             KerenOrFirstProject_VertX
                        
-                       
+            
             --------------------------------------------------------------------------------------- 
              """;
 
-    @Override
-    public void start() {
-
-    } //eventLoop
-
-
-    public Future<Void> writeUserToFile(HashMap<String, ToDo> users) {
-        Promise<Void> promise = Promise.promise();
-        vertx.executeBlocking(promiseHandler -> {
-            Map<String, ToDo> todoMap = new HashMap<>();
-            try (FileReader reader = new FileReader(FileName)) {
-                Type type = new TypeToken<HashMap<String, ToDo>>() {
-                }.getType();
-                todoMap = gson.fromJson(reader, type);
-                if (todoMap == null) {
-                    todoMap = new HashMap<>();
-                }
-            } catch (IOException e) {
-                logger.error(e);
-                promiseHandler.fail(e);
-                return;
-            }
-
-            todoMap.putAll(users);
-            try (FileWriter file = new FileWriter(FileName)) {
-                gson.toJson(todoMap, file);
-                promiseHandler.complete();
-            } catch (IOException e) {
-                logger.error(e);
-                promiseHandler.fail(e);
-            }
-        }, promise);
-
-        return promise.future();
-    }
-
     public static void main(String[] args) {
-        JsonWriter jsonWriter = new JsonWriter();
-        JsonReader jsonReader = new JsonReader();
-        JsonDelete jsonDelete = new JsonDelete();
-
+        jsonWriter jsonWriter = new jsonWriter();
+        jsonReader jsonReader = new jsonReader();
+        jsonDelete jsonDelete = new jsonDelete();
+        Logger logger = LogManager.getLogger(jsonApplication.class);
         Scanner scanner = new Scanner(System.in);
-        HashMap<String, ToDo> users = new HashMap<>();
+        HashMap<String, toDoUser> users = new HashMap<>();
         System.out.println(FirstBlock);
         while (true) {
             logger.info("Welcome to the ToDo Manager!");
@@ -142,13 +100,13 @@ public class JsonWriter extends AbstractVerticle {
                             System.exit(0);
                             break;
                         }
-                        ToDo user1 = new ToDo();
-                        user1.ToDo(name, Integer.parseInt(id), "Student");
+                        toDoUser user1 = new toDoUser();
+                        user1.ToDoUser(name, Integer.parseInt(id), "Student");
                         users.put(id, user1);
                         logger.info("Write 'done' if you would like to stop adding students.");
                         Stopper = scanner.next();
                     }
-                    jsonWriter.writeUserToFile(users).onComplete(result -> {
+                    jsonWriter.write(users, validationClass.Files.USERS).onComplete(result -> {
                         if (result.succeeded()) {
                             logger.info("Writed user to file");
                         } else {
@@ -158,11 +116,11 @@ public class JsonWriter extends AbstractVerticle {
                     break;
 
                 case FUNCTIONS.READ_FROM_FILE:
-                    jsonReader.readUserFromFile().onComplete(readResult -> {
+                    jsonReader.readJson(validationClass.Files.USERS).onComplete(readResult -> {
                         if (readResult.succeeded()) {
 
                             logger.info("Read Successful");
-                            for (Map.Entry<String, ToDo> entry : readResult.result().entrySet()) {
+                            for (Map.Entry<String, toDoUser> entry : readResult.result().entrySet()) {
                                 logger.info("Key: " + entry.getKey() + ", name: " + entry.getValue().getName() + ", id: " + entry.getValue().getId() + ", Description: " + entry.getValue().getDescription());
                             }
                         } else {
@@ -184,7 +142,7 @@ public class JsonWriter extends AbstractVerticle {
                     logger.warn("Are you sure you want to delete the information from the JSON file? (1 for yes 0 for no)");
                     String YesNo = scanner.next();
                     if (Integer.parseInt(YesNo) == 1) {
-                        jsonDelete.DeleteFromJson(choice).onComplete(result -> {
+                        jsonDelete.deleteUser(choice, validationClass.Files.USERS).onComplete(result -> {
                             if (result.succeeded()) {
                                 logger.info("Delete Successful");
                             }
@@ -217,6 +175,5 @@ public class JsonWriter extends AbstractVerticle {
 
 
     }
-
 
 }

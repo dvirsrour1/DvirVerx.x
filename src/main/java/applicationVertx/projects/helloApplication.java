@@ -1,10 +1,10 @@
-package org.example.Verticles.HelloVerticle;
+package applicationVertx.projects;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 
-public class HelloVerticle extends AbstractVerticle {
+public class helloApplication extends AbstractVerticle {
 
     @Override
     public void start(Promise<Void> future) {
@@ -13,6 +13,6 @@ public class HelloVerticle extends AbstractVerticle {
 
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
-        vertx.deployVerticle(new HelloVerticle());
+        vertx.deployVerticle(new helloApplication());
     }
 }

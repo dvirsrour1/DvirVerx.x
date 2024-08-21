@@ -1,12 +1,12 @@
-package org.example.Verticles.JsonReaderAndWriter;
+package applicationVertx.verticles.jsonVerticles;
 
-import com.google.gson.Gson;
+import applicationVertx.validation.validationClass;
+import applicationVertx.Entitys.toDoUserEntity.toDoUser;
 import com.google.gson.reflect.TypeToken;
 import io.vertx.core.*;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.Verticles.ToDoEntity.ToDo;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,29 +14,30 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JsonDelete extends AbstractVerticle {
-    private static final Gson gson = new Gson();
-    private static final Vertx vertx = Vertx.vertx();
-    private final static Logger logger = LogManager.getLogger(JsonDelete.class);
-    private final static String FileName = "C:\\Users\\aliza_rvjno4x\\IdeaProjects\\DvirVerx.x\\src\\main\\java\\org\\example\\JsonFiles\\data.json";
+import static applicationVertx.validation.validationClass.fileNameOfUsers;
+import static applicationVertx.validation.validationClass.gson;
+import static applicationVertx.validation.validationClass.*;
 
+public class jsonDelete extends AbstractVerticle {
 
+    private final static Logger logger = getLoggerFromValidationClass(jsonDelete.class);
     @Override
     public void start() {
 
     }
 
-    public Future<String> DeleteFromJson(String id) {
+    public Future<String> deleteUser(String id,Files files) {
+        String FileAddress = files.getFileName(files);
         Promise<String> promise = Promise.promise();
-        vertx.executeBlocking(PromiseHandler ->{
-            try (FileReader reader = new FileReader(FileName)) {
-                Map<String, ToDo> todoMap = new HashMap<>();
-                Type type = new TypeToken<HashMap<String, ToDo>>() {}.getType();
+        validationClass.vertx.executeBlocking(PromiseHandler ->{
+            try (FileReader reader = new FileReader(FileAddress)) {
+                Map<String, toDoUser> todoMap = new HashMap<>();
+                Type type = new TypeToken<HashMap<String, toDoUser>>() {}.getType();
                 todoMap = gson.fromJson(reader, type);
                 if(todoMap.containsKey(id))
                 {
                     todoMap.remove(id);
-                    try(FileWriter file = new FileWriter(FileName)) {
+                    try(FileWriter file = new FileWriter(FileAddress)) {
                         gson.toJson(todoMap,file);
                     }catch (Exception e)
                     {
