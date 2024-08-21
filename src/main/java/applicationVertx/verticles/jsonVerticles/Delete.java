@@ -1,12 +1,11 @@
 package applicationVertx.verticles.jsonVerticles;
 
-import applicationVertx.validation.validationClass;
-import applicationVertx.Entitys.toDoUserEntity.toDoUser;
+import applicationVertx.utils.Consts;
+import applicationVertx.entitys.User;
 import com.google.gson.reflect.TypeToken;
 import io.vertx.core.*;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,25 +13,24 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import static applicationVertx.validation.validationClass.fileNameOfUsers;
-import static applicationVertx.validation.validationClass.gson;
-import static applicationVertx.validation.validationClass.*;
+import static applicationVertx.utils.Consts.gson;
+import static applicationVertx.utils.Validations.*;
 
-public class jsonDelete extends AbstractVerticle {
+public class Delete extends AbstractVerticle {
 
-    private final static Logger logger = getLoggerFromValidationClass(jsonDelete.class);
+    private final static Logger logger = getLoggerFromValidationClass(Delete.class);
     @Override
     public void start() {
 
     }
 
     public Future<String> deleteUser(String id,Files files) {
-        String FileAddress = files.getFileName(files);
+        String FileAddress = files.fileType(files);
         Promise<String> promise = Promise.promise();
-        validationClass.vertx.executeBlocking(PromiseHandler ->{
+        Consts.vertx.executeBlocking(PromiseHandler ->{
             try (FileReader reader = new FileReader(FileAddress)) {
-                Map<String, toDoUser> todoMap = new HashMap<>();
-                Type type = new TypeToken<HashMap<String, toDoUser>>() {}.getType();
+                Map<String, User> todoMap = new HashMap<>();
+                Type type = new TypeToken<HashMap<String, User>>() {}.getType();
                 todoMap = gson.fromJson(reader, type);
                 if(todoMap.containsKey(id))
                 {

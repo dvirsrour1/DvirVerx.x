@@ -1,13 +1,13 @@
-package applicationVertx.Entitys.toDoUserEntity;
+package applicationVertx.entitys;
 
-public class toDoUser {
+public class User {
 
     private String name;
     private int id;
     private String description;
 
 
-    public void ToDoUser(String name, int id, String description)
+    public void User(String name, int id, String description)
     {
         this.name = name;
         this.id = id;

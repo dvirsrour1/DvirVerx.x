@@ -1,10 +1,10 @@
-package applicationVertx.projects;
+package applicationVertx.hidden;
 
-import applicationVertx.validation.validationClass;
-import applicationVertx.verticles.jsonVerticles.jsonDelete;
-import applicationVertx.verticles.jsonVerticles.jsonReader;
-import applicationVertx.verticles.jsonVerticles.jsonWriter;
-import applicationVertx.Entitys.toDoUserEntity.toDoUser;
+import applicationVertx.utils.Validations;
+import applicationVertx.verticles.jsonVerticles.Delete;
+import applicationVertx.verticles.jsonVerticles.Reader;
+import applicationVertx.verticles.jsonVerticles.Writer;
+import applicationVertx.entitys.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,12 +56,12 @@ public class jsonApplication {
              """;
 
     public static void main(String[] args) {
-        jsonWriter jsonWriter = new jsonWriter();
-        jsonReader jsonReader = new jsonReader();
-        jsonDelete jsonDelete = new jsonDelete();
+        Writer jsonWriter = new Writer();
+        Reader jsonReader = new Reader();
+        Delete jsonDelete = new Delete();
         Logger logger = LogManager.getLogger(jsonApplication.class);
         Scanner scanner = new Scanner(System.in);
-        HashMap<String, toDoUser> users = new HashMap<>();
+        HashMap<String, User> users = new HashMap<>();
         System.out.println(FirstBlock);
         while (true) {
             logger.info("Welcome to the ToDo Manager!");
@@ -100,13 +100,13 @@ public class jsonApplication {
                             System.exit(0);
                             break;
                         }
-                        toDoUser user1 = new toDoUser();
-                        user1.ToDoUser(name, Integer.parseInt(id), "Student");
+                        User user1 = new User();
+                        user1.User(name, Integer.parseInt(id), "Student");
                         users.put(id, user1);
                         logger.info("Write 'done' if you would like to stop adding students.");
                         Stopper = scanner.next();
                     }
-                    jsonWriter.write(users, validationClass.Files.USERS).onComplete(result -> {
+                    jsonWriter.write(users, Validations.Files.USERS).onComplete(result -> {
                         if (result.succeeded()) {
                             logger.info("Writed user to file");
                         } else {
@@ -116,11 +116,11 @@ public class jsonApplication {
                     break;
 
                 case FUNCTIONS.READ_FROM_FILE:
-                    jsonReader.readJson(validationClass.Files.USERS).onComplete(readResult -> {
+                    jsonReader.readJson(Validations.Files.USERS).onComplete(readResult -> {
                         if (readResult.succeeded()) {
 
                             logger.info("Read Successful");
-                            for (Map.Entry<String, toDoUser> entry : readResult.result().entrySet()) {
+                            for (Map.Entry<String, User> entry : readResult.result().entrySet()) {
                                 logger.info("Key: " + entry.getKey() + ", name: " + entry.getValue().getName() + ", id: " + entry.getValue().getId() + ", Description: " + entry.getValue().getDescription());
                             }
                         } else {
@@ -142,7 +142,7 @@ public class jsonApplication {
                     logger.warn("Are you sure you want to delete the information from the JSON file? (1 for yes 0 for no)");
                     String YesNo = scanner.next();
                     if (Integer.parseInt(YesNo) == 1) {
-                        jsonDelete.deleteUser(choice, validationClass.Files.USERS).onComplete(result -> {
+                        jsonDelete.deleteUser(choice, Validations.Files.USERS).onComplete(result -> {
                             if (result.succeeded()) {
                                 logger.info("Delete Successful");
                             }

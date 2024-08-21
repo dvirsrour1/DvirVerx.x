@@ -3,21 +3,20 @@ package applicationVertx.verticles.http;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.ext.web.Router;
 import org.apache.logging.log4j.Logger;
 
-import static applicationVertx.validation.validationClass.getLoggerFromValidationClass;
+import static applicationVertx.utils.Consts.router;
+import static applicationVertx.utils.Validations.getLoggerFromValidationClass;
 
 
-public class httpServer extends AbstractVerticle{
+public class Server extends AbstractVerticle{
 
-    private static final Logger log = getLoggerFromValidationClass(httpServer.class);
-    private final httpClass httpClassInstance = new httpClass();
+    private static final Logger log = getLoggerFromValidationClass(Server.class);
+    private final HttpHandlers httpClassInstance = new HttpHandlers();
 
     @Override
     public void start(Promise<Void> future) {
 
-        Router router = httpClassInstance.createRouter(vertx);
         vertx.createHttpServer() // הגדרת שרת
                 .requestHandler(router
                 ).listen(config().getInteger("http.port", 9090), //הגדרת PORT
