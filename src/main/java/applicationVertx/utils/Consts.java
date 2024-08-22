@@ -1,5 +1,7 @@
 package applicationVertx.utils;
 
+import applicationVertx.entitys.Task;
+import applicationVertx.entitys.User;
 import applicationVertx.verticles.http.RouterClass;
 import applicationVertx.verticles.jsonVerticles.Delete;
 import applicationVertx.verticles.jsonVerticles.Reader;
@@ -21,9 +23,10 @@ public class Consts {
     public static final String CONTENT_TYPE = "content-type";
     public static final String APPLICATION_JSON = "application/json";
     public static final String TEXT_PLAIN = Consts.TEXT_PLAIN;
-
-    public static final Writer jsonWriter = new Writer();
-    public static final Delete jsonDelete = new Delete();
-    public static final Reader jsonReader = new Reader();
-
+    public static final Writer<User> userWriter = new Writer<User>();
+    public static final Reader<User> userReader = new Reader<User>();
+    public static final Delete<User> userDeleter = new Delete<User>();
+    public static final Writer<Task> taskWriter = new Writer<Task>();
+    public static final Reader<Task> taskReader = new Reader<Task>();
+    public static final Delete<Task> taskDeleter = new Delete<Task>();
 }

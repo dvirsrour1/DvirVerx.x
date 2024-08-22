@@ -15,23 +15,19 @@ import java.util.Map;
 import static applicationVertx.utils.Consts.gson;
 import static applicationVertx.utils.Validations.*;
 
-public class Writer extends AbstractVerticle {
+public class Writer<T>{
 
+    private T item;
     public final static Logger logger = getLoggerFromValidationClass(Writer.class);
 
-    @Override
-    public void start() {
 
-    } //eventLoop
-
-
-    public Future<Void> write(HashMap<String, User> users, Files files) {
+    public Future<Void> write(HashMap<String, T> users, Files files) {
         String file = Files.fileType(files);
         Promise<Void> promise = Promise.promise();
         Consts.vertx.executeBlocking(promiseHandler -> {
-            Map<String, User> todoMap = new HashMap<>();
+            Map<String, T> todoMap = new HashMap<>();
             try (FileReader reader = new FileReader(file)) {
-                Type type = new TypeToken<HashMap<String, User>>() {
+                Type type = new TypeToken<HashMap<String, T>>() {
                 }.getType();
                 todoMap = gson.fromJson(reader, type);
                 if (todoMap == null) {
