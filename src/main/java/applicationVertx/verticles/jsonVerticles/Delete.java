@@ -16,21 +16,19 @@ import java.util.Map;
 import static applicationVertx.utils.Consts.gson;
 import static applicationVertx.utils.Validations.*;
 
-public class Delete extends AbstractVerticle {
+public class Delete<T> {
 
+    private T item;
     private final static Logger logger = getLoggerFromValidationClass(Delete.class);
-    @Override
-    public void start() {
 
-    }
 
     public Future<String> deleteUser(String id,Files files) {
         String FileAddress = files.fileType(files);
         Promise<String> promise = Promise.promise();
         Consts.vertx.executeBlocking(PromiseHandler ->{
             try (FileReader reader = new FileReader(FileAddress)) {
-                Map<String, User> todoMap = new HashMap<>();
-                Type type = new TypeToken<HashMap<String, User>>() {}.getType();
+                Map<String, T> todoMap = new HashMap<>();
+                Type type = new TypeToken<HashMap<String, T>>() {}.getType();
                 todoMap = gson.fromJson(reader, type);
                 if(todoMap.containsKey(id))
                 {

@@ -19,19 +19,16 @@ import static applicationVertx.utils.Validations.*;
 import static java.lang.Character.getType;
 import static org.apache.logging.log4j.LogManager.getLogger;
 
-public class Reader extends AbstractVerticle {
+public class Reader<T>{
+    private T item;
     private final static Logger log = getLoggerFromValidationClass(Reader.class);
-    @Override
-    public void start() {
-        // eventLoop logic here
-    }
 
-    public Future<Map<String, User>> readJson(Files files) {
+    public Future<Map<String, T>> readJson(Files files) {
         String file = Files.fileType(files);
-        Promise<Map<String, User>> promise = Promise.promise();
+        Promise<Map<String, T>> promise = Promise.promise();
         Consts.vertx.executeBlocking(promiseHandler -> {
             try (FileReader reader = new FileReader(file)) {
-                Map<String, User> todoMap = new HashMap<>();
+                Map<String, T> todoMap = new HashMap<>();
                 Type type = new TypeToken<HashMap<String, User>>() {}.getType();
                 todoMap = gson.fromJson(reader, type);
                 if(todoMap.isEmpty()) {todoMap = null;};

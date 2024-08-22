@@ -7,5 +7,7 @@ public interface Interface {
     void newUser(RoutingContext routingContext);
     void deleteUser(RoutingContext routingContext);
     void updateUserDescription(RoutingContext routingContext);
+    void postAddTask(RoutingContext routingContext);
+    void postDeleteTask(RoutingContext routingContext);
     //adding new functions
 }
