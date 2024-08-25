@@ -7,6 +7,7 @@ import applicationVertx.entitys.User;
 import applicationVertx.verticles.jsonVerticles.Writer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 
 import java.util.HashMap;
@@ -123,13 +124,32 @@ public class HttpHandlers implements Interface {
         Consts.userDeleter.deleteUser(id, Validations.Files.USERS).onComplete(rc ->{
             if(rc.succeeded())
             {
-                routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("The list updated successfully");
             }else{
                 routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("ERROR: Deleting Failed");
             }
         });
 
         //delete the tasks he had
+
+
+
+        Consts.userReader.readJson(Validations.Files.TASKS).onComplete(rc -> {
+            if (rc.succeeded()) {
+                for (Map.Entry<String, User> entry : rc.result().entrySet()) {
+                    if(entry.getValue().getId() == Integer.parseInt(id)){
+                        Consts.taskDeleter.deleteUser(entry.getKey(), Validations.Files.TASKS).onComplete(rc1 ->{
+
+                        });
+                    }
+                }
+                routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("The list updated successfully");
+
+            }
+            if (rc.failed()) {
+                routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("ERROR: Deleting tasks Failed");
+
+            }
+        });
     }
 
     public void postAddTask(RoutingContext routingContext) {
@@ -151,7 +171,7 @@ public class HttpHandlers implements Interface {
                     userHelp.User(entry.getValue().getName(), entry.getValue().getId(), entry.getValue().getDescription());
                     hashMapFromJson.put(entry.getKey(), userHelp);
                 }
-                if (hashMapFromJson.get(userId).toString().equals("null")) {
+                if (hashMapFromJson.get(userId)==null) {
                     routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("ERROR: There is no User with this ID in the system");
                     return;
                 }
@@ -184,5 +204,25 @@ public class HttpHandlers implements Interface {
         });
     }
 
-
+    @Override
+    public void getShowTask(RoutingContext routingContext) {
+        Consts.userReader.readJson(Validations.Files.TASKS).onComplete(rc -> {
+            if (rc.succeeded()) {
+                JsonArray jsonArray = new JsonArray();
+                for (Map.Entry<String, User> entry : rc.result().entrySet()) {
+                    Task taskHelp = new Task();
+                    taskHelp.task(entry.getValue().getName(),entry.getValue().getId(),entry.getValue().getDescription());
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("taskName", entry.getKey());
+                    jsonObject.addProperty("idOfUser", taskHelp.getIdOfUser());
+                    jsonObject.addProperty("taskDescription", taskHelp.getDescription());
+                    jsonArray.add(jsonObject);
+                }
+                routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.APPLICATION_JSON).end(jsonArray.toString());
+            }
+            if (rc.failed()) {
+                routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("Reading has failed");
+            }
+        });
+    }
 }

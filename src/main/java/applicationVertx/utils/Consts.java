@@ -27,6 +27,5 @@ public class Consts {
     public static final Reader<User> userReader = new Reader<User>();
     public static final Delete<User> userDeleter = new Delete<User>();
     public static final Writer<Task> taskWriter = new Writer<Task>();
-    public static final Reader<Task> taskReader = new Reader<Task>();
     public static final Delete<Task> taskDeleter = new Delete<Task>();
 }
