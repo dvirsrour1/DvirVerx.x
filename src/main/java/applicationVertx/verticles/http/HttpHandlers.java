@@ -4,17 +4,14 @@ import applicationVertx.entitys.Task;
 import applicationVertx.utils.Consts;
 import applicationVertx.utils.Validations;
 import applicationVertx.entitys.User;
-import applicationVertx.verticles.jsonVerticles.Writer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static applicationVertx.utils.Consts.gson;
-import static applicationVertx.utils.Consts.log;
 import static applicationVertx.utils.Validations.intToString;
 
 public class HttpHandlers implements Interface {
@@ -50,9 +47,13 @@ public class HttpHandlers implements Interface {
 
     }
     public void getAll(RoutingContext routingContext) {
-        Consts.userReader.readJson(Validations.Files.USERS).onComplete(rc -> {
+        Consts.userReader.readJsonGeneric(Validations.Files.USERS).onComplete(rc -> {
             if(rc.succeeded())
             {
+                if(rc.result()==null)
+                {
+                    routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("No user found.");
+                }
                 JsonArray jsonArray = new JsonArray();
                 for (Map.Entry<String, User> entry : rc.result().entrySet()) {
                     JsonObject json = new JsonObject();
@@ -70,7 +71,7 @@ public class HttpHandlers implements Interface {
     public void updateUserDescription(RoutingContext routingContext) {
         HashMap<String, User> hashMapFromJson = new HashMap<>();
 
-        Consts.userReader.readJson(Validations.Files.USERS).onComplete(rc -> {
+        Consts.userReader.readJsonGeneric(Validations.Files.USERS).onComplete(rc -> {
             if(rc.succeeded())
             {
                 String userId = routingContext.getBodyAsJson().getString("userId");
@@ -133,12 +134,11 @@ public class HttpHandlers implements Interface {
 
 
 
-        Consts.userReader.readJson(Validations.Files.TASKS).onComplete(rc -> {
+        Consts.userReader.readJsonTask(Validations.Files.TASKS).onComplete(rc -> {
             if (rc.succeeded()) {
-                for (Map.Entry<String, User> entry : rc.result().entrySet()) {
-                    if(entry.getValue().getId() == Integer.parseInt(id)){
+                for (Map.Entry<String, Task> entry : rc.result().entrySet()) {
+                    if(entry.getValue().getIdOfUser() == Integer.parseInt(id)){
                         Consts.taskDeleter.deleteUser(entry.getKey(), Validations.Files.TASKS).onComplete(rc1 ->{
-
                         });
                     }
                 }
@@ -152,7 +152,7 @@ public class HttpHandlers implements Interface {
         });
     }
 
-    public void postAddTask(RoutingContext routingContext) {
+    public void addTask(RoutingContext routingContext) {
         HashMap<String, User> hashMapFromJson = new HashMap<>();
         Task task1 = new Task();
         try{
@@ -161,7 +161,7 @@ public class HttpHandlers implements Interface {
         {
 
         }
-        Consts.userReader.readJson(Validations.Files.USERS).onComplete(rc -> {
+        Consts.userReader.readJsonGeneric(Validations.Files.USERS).onComplete(rc -> {
             if (rc.succeeded()) {
                 int userId = routingContext.getBodyAsJson().getInteger("idOfUser");
                 String description = routingContext.getBodyAsJson().getString("description");
@@ -171,6 +171,7 @@ public class HttpHandlers implements Interface {
                     userHelp.User(entry.getValue().getName(), entry.getValue().getId(), entry.getValue().getDescription());
                     hashMapFromJson.put(entry.getKey(), userHelp);
                 }
+
                 if (hashMapFromJson.get(userId)==null) {
                     routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("ERROR: There is no User with this ID in the system");
                     return;
@@ -192,7 +193,7 @@ public class HttpHandlers implements Interface {
 
 
     }
-    public void postDeleteTask(RoutingContext routingContext) {
+    public void deleteTask(RoutingContext routingContext) {
         Consts.taskDeleter.deleteUser(routingContext.getBodyAsJson().getString("nameOfTask"), Validations.Files.TASKS).onComplete(rc -> {
             if (rc.succeeded()) {
 
@@ -205,13 +206,17 @@ public class HttpHandlers implements Interface {
     }
 
     @Override
-    public void getShowTask(RoutingContext routingContext) {
-        Consts.userReader.readJson(Validations.Files.TASKS).onComplete(rc -> {
+    public void showTask(RoutingContext routingContext) {
+        Consts.userReader.readJsonTask(Validations.Files.TASKS).onComplete(rc -> {
             if (rc.succeeded()) {
+                if(rc.result()==null)
+                {
+                    routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("No tasks found");
+                }
                 JsonArray jsonArray = new JsonArray();
-                for (Map.Entry<String, User> entry : rc.result().entrySet()) {
+                for (Map.Entry<String, Task> entry : rc.result().entrySet()) {
                     Task taskHelp = new Task();
-                    taskHelp.task(entry.getValue().getName(),entry.getValue().getId(),entry.getValue().getDescription());
+                    taskHelp.task(entry.getValue().getNameOfTask(),entry.getValue().getIdOfUser(),entry.getValue().getDescription());
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("taskName", entry.getKey());
                     jsonObject.addProperty("idOfUser", taskHelp.getIdOfUser());

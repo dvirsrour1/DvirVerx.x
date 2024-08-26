@@ -13,9 +13,9 @@ public class RouterClass extends HttpHandlers {
         router.post("/NewUser").handler(this::newUser);
         router.delete("/DeleteUser/:userId").handler(this::deleteUser);
         router.post("/UpdateUserDescription").handler(this::updateUserDescription);
-        router.post("/AddTask").handler(this::postAddTask);
-        router.delete("/DeleteTask").handler(this::postDeleteTask);
-        router.get("/Tasks").handler(this::getShowTask);
+        router.post("/AddTask").handler(this::addTask);
+        router.delete("/DeleteTask").handler(this::deleteTask);
+        router.get("/Tasks").handler(this::showTask);
 
         return router;
     }
