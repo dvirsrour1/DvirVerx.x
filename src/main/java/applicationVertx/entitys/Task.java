@@ -1,6 +1,6 @@
-package applicationVertx.Entitys.tasksEntity;
+package applicationVertx.entitys;
 
-public class task {
+public class Task {
 
     private String nameOfTask;
     private int idOfUser;
