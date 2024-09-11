@@ -38,7 +38,7 @@ public class HttpHandlers implements Interface {
         Consts.userWriter.write(users, Validations.Files.USERS).onComplete(rc -> {
             if (rc.succeeded()) {
                 routingContext.response()
-                        .putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("User added correctly");
+                        .putHeader(Consts.CONTENT_TYPE,Consts.TEXT_PLAIN).end("User added correctly");
             }
             if (rc.failed()) {
                 routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("User adding has failed");

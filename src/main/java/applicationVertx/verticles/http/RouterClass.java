@@ -9,6 +9,19 @@ public class RouterClass extends HttpHandlers {
 
     public Router createRouter(Vertx vertx) {
         Router router = Router.router(vertx);
+
+        router.route().handler(CorsHandler.create("*")
+                .allowedMethod(io.vertx.core.http.HttpMethod.GET)
+                .allowedMethod(io.vertx.core.http.HttpMethod.POST)
+                .allowedMethod(io.vertx.core.http.HttpMethod.PUT)
+                .allowedMethod(io.vertx.core.http.HttpMethod.DELETE)
+                .allowedHeader("Content-Type")
+                .allowedHeader("Authorization")
+                .allowedHeader("Accept")
+                .allowedHeader("Access-Control-Allow-Origin")
+                .allowedHeader("Access-Control-Allow-Credentials")
+                .allowCredentials(true));
+
         router.route().handler(BodyHandler.create()); // מטפל בגוף הבקשות. BODY
         router.get("/List").handler(this::getAll);
         router.post("/NewUser").handler(this::newUser);
@@ -19,14 +32,7 @@ public class RouterClass extends HttpHandlers {
         router.get("/Tasks").handler(this::showTask);
 
 
-        router.route().handler(CorsHandler.create("*")  // מאפשר לכל מקור לגשת
-                .allowedMethod(io.vertx.core.http.HttpMethod.GET)
-                .allowedMethod(io.vertx.core.http.HttpMethod.POST)
-                .allowedMethod(io.vertx.core.http.HttpMethod.OPTIONS)
-                .allowedMethod(io.vertx.core.http.HttpMethod.DELETE) // אם נדרש
-                .allowedHeader("Content-Type") // כותרת שמתאימה לנתונים שנשלחים
-                .allowedHeader("Authorization") // אם אתה שולח אישורים
-                .allowCredentials(true)); // אם יש דרישה ל-Credentials כמו עוגיות
+
  //allow everyone
         return router;
     }
