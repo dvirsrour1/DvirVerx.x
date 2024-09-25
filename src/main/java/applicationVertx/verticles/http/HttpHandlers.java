@@ -123,11 +123,13 @@ public class HttpHandlers implements Interface {
             routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("Id is not correct");
         }
         Consts.userDeleter.deleteUser(id, Validations.Files.USERS).onComplete(rc ->{
-            if(rc.succeeded())
+
+            if(rc.failed())
             {
-            }else{
                 routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("ERROR: Deleting Failed");
+
             }
+
         });
 
         //delete the tasks he had
@@ -200,7 +202,8 @@ public class HttpHandlers implements Interface {
                 routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("Task deleted");
             }
             if (rc.failed()) {
-                routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("Error deleting task");
+                routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("Error deleting task").failed();
+
             }
         });
     }

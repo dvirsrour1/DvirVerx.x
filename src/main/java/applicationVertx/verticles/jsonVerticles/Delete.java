@@ -30,7 +30,11 @@ public class Delete<T> {
                 Map<String, T> todoMap = new HashMap<>();
                 Type type = new TypeToken<HashMap<String, T>>() {}.getType();
                 todoMap = gson.fromJson(reader, type);
-                if(todoMap.containsKey(id))
+                if(!todoMap.containsKey(id))
+                {
+                    PromiseHandler.fail("id " + id + " not found");
+                }
+                else
                 {
                     todoMap.remove(id);
                     try(FileWriter file = new FileWriter(FileAddress)) {
@@ -41,9 +45,6 @@ public class Delete<T> {
                         PromiseHandler.fail(e);
                     }
 
-                }
-                else {
-                    PromiseHandler.fail("id " + id + " not found");
                 }
                 if(todoMap.isEmpty()) {todoMap = null;};
                 PromiseHandler.complete("Item deleted successfully.");

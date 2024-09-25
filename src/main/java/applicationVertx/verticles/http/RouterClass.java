@@ -33,7 +33,6 @@ public class RouterClass extends HttpHandlers {
 
 
 
- //allow everyone
         return router;
     }
 }
