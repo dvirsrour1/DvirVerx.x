@@ -2,22 +2,22 @@ package applicationVertx.entitys;
 
 public class Task {
 
-    private String nameOfTask;
+    private String taskName;
     private int idOfUser;
-    private String description;
+    private String taskDescription;
 
     public void task(String nameOfTask, int idOfUser, String description) {
-        this.nameOfTask = nameOfTask;
+        this.taskName = nameOfTask;
         this.idOfUser = idOfUser;
-        this.description = description;
+        this.taskDescription = description;
 
     }
-    public String getNameOfTask() {
-        return nameOfTask;
+    public String getTaskName() {
+        return taskName;
 
     }
-    public void setNameOfTask(String nameOfTask) {
-        this.nameOfTask = nameOfTask;
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
     public int getIdOfUser() {
         return idOfUser;
@@ -26,11 +26,11 @@ public class Task {
         this.idOfUser = idOfUser;
 
     }
-    public String getDescription() {
-        return description;
+    public String getTaskDescription() {
+        return taskDescription;
     }
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTaskDescription(String taskDescription) {
+        this.taskDescription = taskDescription;
     }
 
 }

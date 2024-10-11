@@ -166,7 +166,7 @@ public class HttpHandlers implements Interface {
         Consts.userReader.readJsonGeneric(Validations.Files.USERS).onComplete(rc -> {
             if (rc.succeeded()) {
                 int userId = routingContext.getBodyAsJson().getInteger("idOfUser");
-                String description = routingContext.getBodyAsJson().getString("description");
+                String description = routingContext.getBodyAsJson().getString("taskDescription");
               //  String results = new String();
                 for (Map.Entry<String, User> entry : rc.result().entrySet()) {
                     User userHelp = new User();
@@ -183,7 +183,7 @@ public class HttpHandlers implements Interface {
             }
         });
         HashMap<String, Task> tasks= new HashMap<>();
-        tasks.put(task1.getNameOfTask(),task1);
+        tasks.put(task1.getTaskName(),task1);
         Consts.taskWriter.write(tasks,Validations.Files.TASKS).onComplete(rc -> {
             if (rc.succeeded()) {
                 routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("Task added successfully");
@@ -219,11 +219,11 @@ public class HttpHandlers implements Interface {
                 JsonArray jsonArray = new JsonArray();
                 for (Map.Entry<String, Task> entry : rc.result().entrySet()) {
                     Task taskHelp = new Task();
-                    taskHelp.task(entry.getValue().getNameOfTask(),entry.getValue().getIdOfUser(),entry.getValue().getDescription());
+                    taskHelp.task(entry.getValue().getTaskName(),entry.getValue().getIdOfUser(),entry.getValue().getTaskDescription());
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("taskName", entry.getKey());
                     jsonObject.addProperty("idOfUser", taskHelp.getIdOfUser());
-                    jsonObject.addProperty("taskDescription", taskHelp.getDescription());
+                    jsonObject.addProperty("taskDescription", taskHelp.getTaskDescription());
                     jsonArray.add(jsonObject);
                 }
                 routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.APPLICATION_JSON).end(jsonArray.toString());
