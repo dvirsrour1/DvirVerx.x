@@ -10,6 +10,7 @@ import io.vertx.ext.web.RoutingContext;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static applicationVertx.utils.Consts.gson;
 import static applicationVertx.utils.Validations.intToString;
@@ -166,15 +167,16 @@ public class HttpHandlers implements Interface {
         Consts.userReader.readJsonGeneric(Validations.Files.USERS).onComplete(rc -> {
             if (rc.succeeded()) {
                 int userId = routingContext.getBodyAsJson().getInteger("idOfUser");
+                String userIdString = routingContext.getBodyAsJson().getInteger("idOfUser").toString();
+                System.out.println(userId);
                 String description = routingContext.getBodyAsJson().getString("taskDescription");
-              //  String results = new String();
                 for (Map.Entry<String, User> entry : rc.result().entrySet()) {
                     User userHelp = new User();
                     userHelp.User(entry.getValue().getName(), entry.getValue().getId(), entry.getValue().getDescription());
                     hashMapFromJson.put(entry.getKey(), userHelp);
                 }
 
-                if (hashMapFromJson.get(userId)==null) {
+                if (hashMapFromJson.containsKey(userIdString)==false) {
                     routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("ERROR: There is no User with this ID in the system");
                     return;
                 }
@@ -184,14 +186,18 @@ public class HttpHandlers implements Interface {
         });
         HashMap<String, Task> tasks= new HashMap<>();
         tasks.put(task1.getTaskName(),task1);
-        Consts.taskWriter.write(tasks,Validations.Files.TASKS).onComplete(rc -> {
-            if (rc.succeeded()) {
-                routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("Task added successfully");
-            }
-            if (rc.failed()) {
-                routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("Error adding task");
-            }
-        });
+        if(task1.getIdOfUser()!=0)
+        {
+            Consts.taskWriter.write(tasks,Validations.Files.TASKS).onComplete(rc -> {
+                if (rc.succeeded()) {
+                    routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("Task added successfully");
+                }
+                if (rc.failed()) {
+                    routingContext.response().putHeader(Consts.CONTENT_TYPE, Consts.TEXT_PLAIN).end("Error adding task");
+                }
+            });
+        }
+
 
 
     }
